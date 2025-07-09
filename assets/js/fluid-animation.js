@@ -723,7 +723,7 @@ function fluid_init() {
         const curlProgram = new GLProgram(baseVertexShader, curlShader);
         const vorticityProgram = new GLProgram(baseVertexShader, vorticityShader);
         const pressureProgram = new GLProgram(baseVertexShader, pressureShader);
-        const gradienSubtractProgram = new GLProgram(baseVertexShader, gradientSubtractShader);
+        const gradientSubtractProgram = new GLProgram(baseVertexShader, gradientSubtractShader);
 
         function initFramebuffers() {
                 let simRes = getResolution(config.SIM_RESOLUTION);
@@ -936,10 +936,10 @@ function fluid_init() {
                         pressure.swap();
                 }
 
-                gradienSubtractProgram.bind();
-                gl.uniform2f(gradienSubtractProgram.uniforms.texelSize, 1.0 / simWidth, 1.0 / simHeight);
-                gl.uniform1i(gradienSubtractProgram.uniforms.uPressure, pressure.read.attach(0));
-                gl.uniform1i(gradienSubtractProgram.uniforms.uVelocity, velocity.read.attach(1));
+                gradientSubtractProgram.bind();
+                gl.uniform2f(gradientSubtractProgram.uniforms.texelSize, 1.0 / simWidth, 1.0 / simHeight);
+                gl.uniform1i(gradientSubtractProgram.uniforms.uPressure, pressure.read.attach(0));
+                gl.uniform1i(gradientSubtractProgram.uniforms.uVelocity, velocity.read.attach(1));
                 blit(velocity.write.fbo);
                 velocity.swap();
 
@@ -1110,7 +1110,29 @@ function fluid_init() {
                 }
         }
 
-        document.querySelector('.blocksy, body').addEventListener('mousemove', e => {
+        // Mouse move event for canvas
+        canvas.addEventListener('mousemove', e => {
+                const rect = canvas.getBoundingClientRect();
+                pointers[0].down = true;
+                pointers[0].color = generateColor();
+                pointers[0].moved = pointers[0].down;
+                pointers[0].dx = (e.clientX - pointers[0].x) * 5.0;
+                pointers[0].dy = (e.clientY - pointers[0].y) * 5.0;
+                pointers[0].x = e.clientX - rect.left;
+                pointers[0].y = e.clientY - rect.top;
+        });
+
+        // Mouse enter/leave events
+        canvas.addEventListener('mouseenter', e => {
+                pointers[0].down = true;
+        });
+
+        canvas.addEventListener('mouseleave', e => {
+                pointers[0].down = false;
+        });
+
+        // Also add to body for fallback
+        document.body.addEventListener('mousemove', e => {
                 pointers[0].down = true;
                 pointers[0].color = generateColor();
                 pointers[0].moved = pointers[0].down;
@@ -1118,7 +1140,6 @@ function fluid_init() {
                 pointers[0].dy = (e.clientY - pointers[0].y) * 5.0;
                 pointers[0].x = e.clientX;
                 pointers[0].y = e.clientY;
-
         });
 
         function generateColor() {
@@ -1197,5 +1218,6 @@ function fluid_init() {
                         multipleSplats(parseInt(Math.random() * 20) + 5);
                 });
         }
+
 
 }
