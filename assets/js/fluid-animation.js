@@ -1134,36 +1134,38 @@ function fluid_init() {
                 }
         }
 
-        // Mouse move event for canvas
-        canvas.addEventListener('mousemove', e => {
-                const rect = canvas.getBoundingClientRect();
+        // Global mouse tracking for non-interactive canvas
+        document.addEventListener('mousemove', e => {
                 pointers[0].down = true;
                 pointers[0].color = generateColor();
                 pointers[0].moved = pointers[0].down;
-                pointers[0].dx = (e.clientX - pointers[0].x) * 5.0;
-                pointers[0].dy = (e.clientY - pointers[0].y) * 5.0;
-                pointers[0].x = e.clientX - rect.left;
-                pointers[0].y = e.clientY - rect.top;
-        });
-
-        // Mouse enter/leave events
-        canvas.addEventListener('mouseenter', e => {
-                pointers[0].down = true;
-        });
-
-        canvas.addEventListener('mouseleave', e => {
-                pointers[0].down = false;
-        });
-
-        // Also add to body for fallback
-        document.body.addEventListener('mousemove', e => {
-                pointers[0].down = true;
-                pointers[0].color = generateColor();
-                pointers[0].moved = pointers[0].down;
-                pointers[0].dx = (e.clientX - pointers[0].x) * 5.0;
-                pointers[0].dy = (e.clientY - pointers[0].y) * 5.0;
+                pointers[0].dx = (e.clientX - pointers[0].x) * 8.0;
+                pointers[0].dy = (e.clientY - pointers[0].y) * 8.0;
                 pointers[0].x = e.clientX;
                 pointers[0].y = e.clientY;
+        });
+
+        // Touch events for mobile
+        document.addEventListener('touchmove', e => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                pointers[0].down = true;
+                pointers[0].color = generateColor();
+                pointers[0].moved = pointers[0].down;
+                pointers[0].dx = (touch.clientX - pointers[0].x) * 8.0;
+                pointers[0].dy = (touch.clientY - pointers[0].y) * 8.0;
+                pointers[0].x = touch.clientX;
+                pointers[0].y = touch.clientY;
+        });
+
+        // Mouse enter document
+        document.addEventListener('mouseenter', e => {
+                pointers[0].down = true;
+        });
+
+        // Mouse leave document
+        document.addEventListener('mouseleave', e => {
+                pointers[0].down = false;
         });
 
         function generateColor() {

@@ -19,13 +19,13 @@ class Blocksy_Fluid_Frontend {
         }
         
         $canvas_attributes = array(
-            'data-fluid-bg' => isset($options['fluid_bg']) ? $options['fluid_bg'] : '#02030F',
+            'data-fluid-bg' => '#000000',
             'data-sim-resol' => isset($options['sim_resolution']) ? $options['sim_resolution'] : 128,
             'data-quality' => wp_is_mobile() && isset($options['mobile_quality']) ? $options['mobile_quality'] : (isset($options['quality']) ? $options['quality'] : 512),
             'data-density' => isset($options['density_dissipation']) ? $options['density_dissipation'] : 0.97,
             'data-vorticity' => isset($options['vorticity']) ? $options['vorticity'] : 30,
             'data-splat-radius' => isset($options['splat_radius']) ? $options['splat_radius'] : 0.5,
-            'data-transparent' => isset($options['transparent']) ? json_encode($options['transparent']) : 'false',
+            'data-transparent' => 'false',
             'data-url' => BLOCKSY_FLUID_ANIMATION_PLUGIN_URL
         );
         
