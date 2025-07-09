@@ -20,6 +20,14 @@ class Blocksy_Fluid_Animation {
         // Elementor integration hooks
         add_action('elementor/frontend/after_enqueue_styles', array($this, 'elementor_enqueue_scripts'));
         add_action('elementor/preview/enqueue_styles', array($this, 'elementor_preview_scripts'));
+        
+        // Blocksy theme specific hooks
+        add_action('blocksy:head:end', array($this, 'add_theme_integration'));
+        add_action('blocksy:content:before', array($this, 'ensure_canvas_position'));
+        
+        // Template hooks for canvas and full width support
+        add_action('elementor/page_templates/canvas/before_content', array($this, 'canvas_template_support'));
+        add_action('wp_head', array($this, 'add_fullwidth_support'), 20);
     }
 
     private function load_dependencies() {
@@ -129,6 +137,86 @@ class Blocksy_Fluid_Animation {
         // Load scripts in Elementor preview mode
         wp_enqueue_style(
             'blocksy-fluid-animation-elementor-preview',
+
+
+    public function add_theme_integration() {
+        $options = get_option('blocksy_fluid_animation_options', array());
+        
+        if (!isset($options['enabled']) || !$options['enabled']) {
+            return;
+        }
+        
+        echo '<style>
+        body.blocksy-fluid-animation-enabled {
+            background: ' . esc_attr($options['fluid_bg']) . ' !important;
+        }
+        </style>';
+    }
+    
+    public function ensure_canvas_position() {
+        $options = get_option('blocksy_fluid_animation_options', array());
+        
+        if (!isset($options['enabled']) || !$options['enabled']) {
+            return;
+        }
+        
+        echo '<script>
+        // Ensure canvas is properly positioned for Blocksy theme
+        if (document.querySelector(".blocksy-fluid-canvas")) {
+            document.body.classList.add("blocksy-fluid-animation-enabled");
+        }
+        </script>';
+    }
+    
+    public function canvas_template_support() {
+        $options = get_option('blocksy_fluid_animation_options', array());
+        
+        if (!isset($options['enabled']) || !$options['enabled']) {
+            return;
+        }
+        
+        echo '<script>
+        // Elementor canvas template support
+        document.addEventListener("DOMContentLoaded", function() {
+            if (document.body.classList.contains("elementor-template-canvas")) {
+                var canvas = document.querySelector(".blocksy-fluid-canvas");
+                if (canvas) {
+                    canvas.style.zIndex = "1";
+                    document.body.style.background = "' . esc_attr($options['fluid_bg']) . '";
+                }
+            }
+        });
+        </script>';
+    }
+    
+    public function add_fullwidth_support() {
+        $options = get_option('blocksy_fluid_animation_options', array());
+        
+        if (!isset($options['enabled']) || !$options['enabled']) {
+            return;
+        }
+        
+        echo '<style>
+        /* Full width and canvas template support */
+        .elementor-template-canvas .blocksy-fluid-canvas,
+        .elementor-template-full-width .blocksy-fluid-canvas {
+            z-index: 1 !important;
+        }
+        
+        .elementor-template-canvas body,
+        .elementor-template-full-width body {
+            background: ' . esc_attr($options['fluid_bg']) . ' !important;
+        }
+        
+        /* Ensure proper layering */
+        .elementor-template-canvas .elementor,
+        .elementor-template-full-width .elementor {
+            position: relative;
+            z-index: 2;
+        }
+        </style>';
+    }
+
             BLOCKSY_FLUID_ANIMATION_PLUGIN_URL . 'assets/css/fluid-animation.css',
             array(),
             BLOCKSY_FLUID_ANIMATION_VERSION

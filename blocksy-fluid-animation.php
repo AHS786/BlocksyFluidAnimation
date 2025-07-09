@@ -75,19 +75,47 @@ function blocksy_fluid_animation_deactivate() {
     }
 }
 
-// Check if Blocksy theme is active
+// Check if Blocksy theme is active and provide enhanced integration
 function blocksy_fluid_animation_check_theme() {
     $theme = wp_get_theme();
-    if ($theme->get('Name') !== 'Blocksy' && $theme->get('Template') !== 'blocksy') {
+    $is_blocksy = ($theme->get('Name') === 'Blocksy' || $theme->get('Template') === 'blocksy');
+    
+    if ($is_blocksy) {
+        // Enhanced integration for Blocksy theme
+        add_action('wp_head', 'blocksy_fluid_animation_theme_integration', 5);
+    } else {
         add_action('admin_notices', 'blocksy_fluid_animation_theme_notice');
     }
 }
-add_action('admin_init', 'blocksy_fluid_animation_check_theme');
+add_action('after_setup_theme', 'blocksy_fluid_animation_check_theme');
+
+function blocksy_fluid_animation_theme_integration() {
+    $options = get_option('blocksy_fluid_animation_options', array());
+    
+    if (!isset($options['enabled']) || !$options['enabled']) {
+        return;
+    }
+    
+    echo '<meta name="blocksy-fluid-animation" content="enabled">';
+    echo '<style>
+    /* Blocksy theme specific styles */
+    .blocksy-fluid-animation-enabled #main-container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .blocksy-fluid-animation-enabled .ct-header,
+    .blocksy-fluid-animation-enabled .ct-footer {
+        position: relative;
+        z-index: 1000;
+    }
+    </style>';
+}
 
 function blocksy_fluid_animation_theme_notice() {
     ?>
-    <div class="notice notice-warning is-dismissible">
-        <p><?php _e('Blocksy Fluid Animation plugin works best with the Blocksy theme. Some features may not work as expected with other themes.', 'blocksy-fluid-animation'); ?></p>
+    <div class="notice notice-info is-dismissible">
+        <p><?php _e('Blocksy Fluid Animation plugin is optimized for the Blocksy theme but will work with other themes. For best results, consider using the Blocksy theme.', 'blocksy-fluid-animation'); ?></p>
     </div>
     <?php
 }

@@ -1,4 +1,3 @@
-
 // Elementor compatibility
 if (typeof elementorFrontend !== 'undefined') {
     elementorFrontend.hooks.addAction('frontend/element_ready/global', function($scope) {
@@ -258,7 +257,7 @@ function fluid_init() {
 
         const baseVertexShader = compileShader(gl.VERTEX_SHADER, `
         precision highp float;
-    
+
         attribute vec2 aPosition;
         varying vec2 vUv;
         varying vec2 vL;
@@ -266,7 +265,7 @@ function fluid_init() {
         varying vec2 vT;
         varying vec2 vB;
         uniform vec2 texelSize;
-    
+
         void main () {
             vUv = aPosition * 0.5 + 0.5;
             vL = vUv - vec2(texelSize.x, 0.0);
@@ -280,11 +279,11 @@ function fluid_init() {
         const clearShader = compileShader(gl.FRAGMENT_SHADER, `
         precision mediump float;
         precision mediump sampler2D;
-    
+
         varying highp vec2 vUv;
         uniform sampler2D uTexture;
         uniform float value;
-    
+
         void main () {
             gl_FragColor = value * texture2D(uTexture, vUv);
         }
@@ -292,9 +291,9 @@ function fluid_init() {
 
         const colorShader = compileShader(gl.FRAGMENT_SHADER, `
         precision mediump float;
-    
+
         uniform vec4 color;
-    
+
         void main () {
             gl_FragColor = color;
         }
@@ -303,13 +302,13 @@ function fluid_init() {
         const backgroundShader = compileShader(gl.FRAGMENT_SHADER, `
         precision highp float;
         precision highp sampler2D;
-    
+
         varying vec2 vUv;
         uniform sampler2D uTexture;
         uniform float aspectRatio;
-    
+
         #define SCALE 25.0
-    
+
         void main () {
             vec2 uv = floor(vUv * SCALE * vec2(aspectRatio, 1.0));
             float v = mod(uv.x + uv.y, 2.0);
@@ -321,10 +320,10 @@ function fluid_init() {
         const displayShader = compileShader(gl.FRAGMENT_SHADER, `
         precision highp float;
         precision highp sampler2D;
-    
+
         varying vec2 vUv;
         uniform sampler2D uTexture;
-    
+
         void main () {
             vec3 C = texture2D(uTexture, vUv).rgb;
             float a = max(C.r, max(C.g, C.b));
@@ -335,13 +334,13 @@ function fluid_init() {
         const displayBloomShader = compileShader(gl.FRAGMENT_SHADER, `
         precision highp float;
         precision highp sampler2D;
-    
+
         varying vec2 vUv;
         uniform sampler2D uTexture;
         uniform sampler2D uBloom;
         uniform sampler2D uDithering;
         uniform vec2 ditherScale;
-    
+
         void main () {
             vec3 C = texture2D(uTexture, vUv).rgb;
             vec3 bloom = texture2D(uBloom, vUv).rgb;
@@ -358,7 +357,7 @@ function fluid_init() {
         const displayShadingShader = compileShader(gl.FRAGMENT_SHADER, `
         precision highp float;
         precision highp sampler2D;
-    
+
         varying vec2 vUv;
         varying vec2 vL;
         varying vec2 vR;
@@ -366,23 +365,23 @@ function fluid_init() {
         varying vec2 vB;
         uniform sampler2D uTexture;
         uniform vec2 texelSize;
-    
+
         void main () {
             vec3 L = texture2D(uTexture, vL).rgb;
             vec3 R = texture2D(uTexture, vR).rgb;
             vec3 T = texture2D(uTexture, vT).rgb;
             vec3 B = texture2D(uTexture, vB).rgb;
             vec3 C = texture2D(uTexture, vUv).rgb;
-    
+
             float dx = length(R) - length(L);
             float dy = length(T) - length(B);
-    
+
             vec3 n = normalize(vec3(dx, dy, length(texelSize)));
             vec3 l = vec3(0.0, 0.0, 1.0);
-    
+
             float diffuse = clamp(dot(n, l) + 0.7, 0.7, 1.0);
             C.rgb *= diffuse;
-    
+
             float a = max(C.r, max(C.g, C.b));
             gl_FragColor = vec4(C, a);
         }
@@ -391,7 +390,7 @@ function fluid_init() {
         const displayBloomShadingShader = compileShader(gl.FRAGMENT_SHADER, `
         precision highp float;
         precision highp sampler2D;
-    
+
         varying vec2 vUv;
         varying vec2 vL;
         varying vec2 vR;
@@ -402,30 +401,30 @@ function fluid_init() {
         uniform sampler2D uDithering;
         uniform vec2 ditherScale;
         uniform vec2 texelSize;
-    
+
         void main () {
             vec3 L = texture2D(uTexture, vL).rgb;
             vec3 R = texture2D(uTexture, vR).rgb;
             vec3 T = texture2D(uTexture, vT).rgb;
             vec3 B = texture2D(uTexture, vB).rgb;
             vec3 C = texture2D(uTexture, vUv).rgb;
-    
+
             float dx = length(R) - length(L);
             float dy = length(T) - length(B);
-    
+
             vec3 n = normalize(vec3(dx, dy, length(texelSize)));
             vec3 l = vec3(0.0, 0.0, 1.0);
-    
+
             float diffuse = clamp(dot(n, l) + 0.7, 0.7, 1.0);
             C *= diffuse;
-    
+
             vec3 bloom = texture2D(uBloom, vUv).rgb;
             vec3 noise = texture2D(uDithering, vUv * ditherScale).rgb;
             noise = noise * 2.0 - 1.0;
             bloom += noise / 800.0;
             bloom = pow(bloom.rgb, vec3(1.0 / 2.2));
             C += bloom;
-    
+
             float a = max(C.r, max(C.g, C.b));
             gl_FragColor = vec4(C, a);
         }
@@ -434,12 +433,12 @@ function fluid_init() {
         const bloomPrefilterShader = compileShader(gl.FRAGMENT_SHADER, `
         precision mediump float;
         precision mediump sampler2D;
-    
+
         varying vec2 vUv;
         uniform sampler2D uTexture;
         uniform vec3 curve;
         uniform float threshold;
-    
+
         void main () {
             vec3 c = texture2D(uTexture, vUv).rgb;
             float br = max(c.r, max(c.g, c.b));
@@ -453,13 +452,13 @@ function fluid_init() {
         const bloomBlurShader = compileShader(gl.FRAGMENT_SHADER, `
         precision mediump float;
         precision mediump sampler2D;
-    
+
         varying vec2 vL;
         varying vec2 vR;
         varying vec2 vT;
         varying vec2 vB;
         uniform sampler2D uTexture;
-    
+
         void main () {
             vec4 sum = vec4(0.0);
             sum += texture2D(uTexture, vL);
@@ -474,14 +473,14 @@ function fluid_init() {
         const bloomFinalShader = compileShader(gl.FRAGMENT_SHADER, `
         precision mediump float;
         precision mediump sampler2D;
-    
+
         varying vec2 vL;
         varying vec2 vR;
         varying vec2 vT;
         varying vec2 vB;
         uniform sampler2D uTexture;
         uniform float intensity;
-    
+
         void main () {
             vec4 sum = vec4(0.0);
             sum += texture2D(uTexture, vL);
@@ -496,14 +495,14 @@ function fluid_init() {
         const splatShader = compileShader(gl.FRAGMENT_SHADER, `
         precision highp float;
         precision highp sampler2D;
-    
+
         varying vec2 vUv;
         uniform sampler2D uTarget;
         uniform float aspectRatio;
         uniform vec3 color;
         uniform vec2 point;
         uniform float radius;
-    
+
         void main () {
             vec2 p = vUv - point.xy;
             p.x *= aspectRatio;
@@ -516,7 +515,7 @@ function fluid_init() {
         const advectionManualFilteringShader = compileShader(gl.FRAGMENT_SHADER, `
         precision highp float;
         precision highp sampler2D;
-    
+
         varying vec2 vUv;
         uniform sampler2D uVelocity;
         uniform sampler2D uSource;
@@ -524,21 +523,21 @@ function fluid_init() {
         uniform vec2 dyeTexelSize;
         uniform float dt;
         uniform float dissipation;
-    
+
         vec4 bilerp (sampler2D sam, vec2 uv, vec2 tsize) {
             vec2 st = uv / tsize - 0.5;
-    
+
             vec2 iuv = floor(st);
             vec2 fuv = fract(st);
-    
+
             vec4 a = texture2D(sam, (iuv + vec2(0.5, 0.5)) * tsize);
             vec4 b = texture2D(sam, (iuv + vec2(1.5, 0.5)) * tsize);
             vec4 c = texture2D(sam, (iuv + vec2(0.5, 1.5)) * tsize);
             vec4 d = texture2D(sam, (iuv + vec2(1.5, 1.5)) * tsize);
-    
+
             return mix(mix(a, b, fuv.x), mix(c, d, fuv.x), fuv.y);
         }
-    
+
         void main () {
             vec2 coord = vUv - dt * bilerp(uVelocity, vUv, texelSize).xy * texelSize;
             gl_FragColor = dissipation * bilerp(uSource, coord, dyeTexelSize);
@@ -549,14 +548,14 @@ function fluid_init() {
         const advectionShader = compileShader(gl.FRAGMENT_SHADER, `
         precision highp float;
         precision highp sampler2D;
-    
+
         varying vec2 vUv;
         uniform sampler2D uVelocity;
         uniform sampler2D uSource;
         uniform vec2 texelSize;
         uniform float dt;
         uniform float dissipation;
-    
+
         void main () {
             vec2 coord = vUv - dt * texture2D(uVelocity, vUv).xy * texelSize;
             gl_FragColor = dissipation * texture2D(uSource, coord);
@@ -567,26 +566,26 @@ function fluid_init() {
         const divergenceShader = compileShader(gl.FRAGMENT_SHADER, `
         precision mediump float;
         precision mediump sampler2D;
-    
+
         varying highp vec2 vUv;
         varying highp vec2 vL;
         varying highp vec2 vR;
         varying highp vec2 vT;
         varying highp vec2 vB;
         uniform sampler2D uVelocity;
-    
+
         void main () {
             float L = texture2D(uVelocity, vL).x;
             float R = texture2D(uVelocity, vR).x;
             float T = texture2D(uVelocity, vT).y;
             float B = texture2D(uVelocity, vB).y;
-    
+
             vec2 C = texture2D(uVelocity, vUv).xy;
             if (vL.x < 0.0) { L = -C.x; }
             if (vR.x > 1.0) { R = -C.x; }
             if (vT.y > 1.0) { T = -C.y; }
             if (vB.y < 0.0) { B = -C.y; }
-    
+
             float div = 0.5 * (R - L + T - B);
             gl_FragColor = vec4(div, 0.0, 0.0, 1.0);
         }
@@ -595,14 +594,14 @@ function fluid_init() {
         const curlShader = compileShader(gl.FRAGMENT_SHADER, `
         precision mediump float;
         precision mediump sampler2D;
-    
+
         varying highp vec2 vUv;
         varying highp vec2 vL;
         varying highp vec2 vR;
         varying highp vec2 vT;
         varying highp vec2 vB;
         uniform sampler2D uVelocity;
-    
+
         void main () {
             float L = texture2D(uVelocity, vL).y;
             float R = texture2D(uVelocity, vR).y;
@@ -616,7 +615,7 @@ function fluid_init() {
         const vorticityShader = compileShader(gl.FRAGMENT_SHADER, `
         precision highp float;
         precision highp sampler2D;
-    
+
         varying vec2 vUv;
         varying vec2 vL;
         varying vec2 vR;
@@ -626,19 +625,19 @@ function fluid_init() {
         uniform sampler2D uCurl;
         uniform float curl;
         uniform float dt;
-    
+
         void main () {
             float L = texture2D(uCurl, vL).x;
             float R = texture2D(uCurl, vR).x;
             float T = texture2D(uCurl, vT).x;
             float B = texture2D(uCurl, vB).x;
             float C = texture2D(uCurl, vUv).x;
-    
+
             vec2 force = 0.5 * vec2(abs(T) - abs(B), abs(R) - abs(L));
             force /= length(force) + 0.0001;
             force *= curl * C;
             force.y *= -1.0;
-    
+
             vec2 vel = texture2D(uVelocity, vUv).xy;
             gl_FragColor = vec4(vel + force * dt, 0.0, 1.0);
         }
@@ -647,7 +646,7 @@ function fluid_init() {
         const pressureShader = compileShader(gl.FRAGMENT_SHADER, `
         precision mediump float;
         precision mediump sampler2D;
-    
+
         varying highp vec2 vUv;
         varying highp vec2 vL;
         varying highp vec2 vR;
@@ -655,14 +654,14 @@ function fluid_init() {
         varying highp vec2 vB;
         uniform sampler2D uPressure;
         uniform sampler2D uDivergence;
-    
+
         vec2 boundary (vec2 uv) {
             return uv;
             // uncomment if you use wrap or repeat texture mode
             // uv = min(max(uv, 0.0), 1.0);
             // return uv;
         }
-    
+
         void main () {
             float L = texture2D(uPressure, boundary(vL)).x;
             float R = texture2D(uPressure, boundary(vR)).x;
@@ -678,7 +677,7 @@ function fluid_init() {
         const gradientSubtractShader = compileShader(gl.FRAGMENT_SHADER, `
         precision mediump float;
         precision mediump sampler2D;
-    
+
         varying highp vec2 vUv;
         varying highp vec2 vL;
         varying highp vec2 vR;
@@ -686,13 +685,13 @@ function fluid_init() {
         varying highp vec2 vB;
         uniform sampler2D uPressure;
         uniform sampler2D uVelocity;
-    
+
         vec2 boundary (vec2 uv) {
             return uv;
             // uv = min(max(uv, 0.0), 1.0);
             // return uv;
         }
-    
+
         void main () {
             float L = texture2D(uPressure, boundary(vL)).x;
             float R = texture2D(uPressure, boundary(vR)).x;
@@ -1244,6 +1243,73 @@ function fluid_init() {
                         multipleSplats(parseInt(Math.random() * 20) + 5);
                 });
         }
+
+// Mouse tracking variables
+let mouseX = 0;
+let mouseY = 0;
+let isMouseDown = false;
+
+// Initialize canvas on page load
+document.addEventListener('DOMContentLoaded', function() {
+    fluid_init();
+    setupMouseTracking();
+});
+
+// Setup mouse tracking for fluid interaction
+function setupMouseTracking() {
+    const canvas = document.querySelector('.blocksy-fluid-canvas');
+    if (!canvas) return;
+
+    // Track mouse movement
+    document.addEventListener('mousemove', function(e) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        // Trigger fluid interaction
+        if (window.addFluidSplat && typeof window.addFluidSplat === 'function') {
+            window.addFluidSplat(mouseX, mouseY);
+        }
+    });
+
+    // Track mouse clicks
+    document.addEventListener('mousedown', function(e) {
+        isMouseDown = true;
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        // Create explosion effect on click
+        if (window.addFluidSplat && typeof window.addFluidSplat === 'function') {
+            window.addFluidSplat(mouseX, mouseY, true);
+        }
+    });
+
+    document.addEventListener('mouseup', function() {
+        isMouseDown = false;
+    });
+
+    // Touch support for mobile
+    document.addEventListener('touchmove', function(e) {
+        if (e.touches.length > 0) {
+            mouseX = e.touches[0].clientX;
+            mouseY = e.touches[0].clientY;
+
+            if (window.addFluidSplat && typeof window.addFluidSplat === 'function') {
+                window.addFluidSplat(mouseX, mouseY);
+            }
+        }
+    });
+
+    document.addEventListener('touchstart', function(e) {
+        if (e.touches.length > 0) {
+            mouseX = e.touches[0].clientX;
+            mouseY = e.touches[0].clientY;
+
+            if (window.addFluidSplat && typeof window.addFluidSplat === 'function') {
+                window.addFluidSplat(mouseX, mouseY, true);
+            }
+        }
+    });
+}
 
 
 }

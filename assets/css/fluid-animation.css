@@ -139,7 +139,7 @@
         transform: translate3d(0, 0, 0);
         -webkit-transform: translate3d(0, 0, 0);
     }
-    
+
     /* Mobile Elementor optimizations */
     .elementor .blocksy-fluid-canvas,
     .elementor-page .blocksy-fluid-canvas {
@@ -311,4 +311,59 @@
 .blocksy-fluid-performance-high .blocksy-fluid-canvas {
     filter: none;
     opacity: 1;
+}
+
+.blocksy-fluid-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: auto;
+    opacity: 1;
+    display: block;
+}
+
+/* Ensure canvas is always on top but behind modals */
+.blocksy-fluid-animation-enabled .blocksy-fluid-canvas {
+    z-index: 999999;
+}
+
+/* Blocksy theme specific adjustments */
+.blocksy .blocksy-fluid-canvas {
+    z-index: 1;
+}
+
+/* Elementor compatibility */
+.elementor .blocksy-fluid-canvas,
+.elementor-page .blocksy-fluid-canvas,
+.elementor-canvas .blocksy-fluid-canvas,
+.elementor-default .blocksy-fluid-canvas {
+    z-index: 1;
+}
+
+/* Ensure content is above canvas */
+.blocksy-fluid-animation-enabled #main-container,
+.blocksy-fluid-animation-enabled .elementor,
+.blocksy-fluid-animation-enabled .elementor-page {
+    position: relative;
+    z-index: 2;
+}
+
+/* Header and navigation adjustments */
+.blocksy-fluid-animation-enabled header,
+.blocksy-fluid-animation-enabled nav,
+.blocksy-fluid-animation-enabled .ct-header,
+.blocksy-fluid-animation-enabled .elementor-location-header {
+    position: relative;
+    z-index: 1000;
+}
+
+/* Footer adjustments */
+.blocksy-fluid-animation-enabled footer,
+.blocksy-fluid-animation-enabled .ct-footer,
+.blocksy-fluid-animation-enabled .elementor-location-footer {
+    position: relative;
+    z-index: 3;
 }
