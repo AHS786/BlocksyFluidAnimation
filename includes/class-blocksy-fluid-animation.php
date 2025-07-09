@@ -221,12 +221,6 @@ class Blocksy_Fluid_Animation {
         </style>';
     }
 
-            BLOCKSY_FLUID_ANIMATION_PLUGIN_URL . 'assets/css/fluid-animation.css',
-            array(),
-            BLOCKSY_FLUID_ANIMATION_VERSION
-        );
-    }
-
     public function admin_enqueue_scripts($hook) {
         if ('settings_page_blocksy-fluid-animation' !== $hook) {
             return;
