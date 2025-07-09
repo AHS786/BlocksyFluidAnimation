@@ -54,8 +54,12 @@ class Blocksy_Fluid_Frontend {
             canvas.setAttribute('<?php echo esc_attr($key); ?>', '<?php echo esc_attr($value); ?>');
             <?php endforeach; ?>
             
-            // Add canvas to body or specific container
-            var container = document.querySelector('.blocksy') || document.body;
+            // Add canvas to body or specific container with Elementor support
+            var container = document.querySelector('.elementor') || 
+                           document.querySelector('.elementor-page') ||
+                           document.querySelector('.elementor-default') ||
+                           document.querySelector('.blocksy') || 
+                           document.body;
             if (container) {
                 container.appendChild(canvas);
             }
@@ -98,6 +102,11 @@ class Blocksy_Fluid_Frontend {
         
         if (isset($options['enabled']) && $options['enabled']) {
             $classes[] = 'blocksy-fluid-animation-enabled';
+            
+            // Add Elementor specific classes
+            if (class_exists('\Elementor\Plugin')) {
+                $classes[] = 'blocksy-fluid-elementor-enabled';
+            }
         }
         
         return $classes;

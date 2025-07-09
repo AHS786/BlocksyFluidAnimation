@@ -60,11 +60,74 @@
     -webkit-backface-visibility: hidden;
 }
 
+/* Elementor specific styles */
+.elementor .blocksy-fluid-canvas,
+.elementor-page .blocksy-fluid-canvas,
+.elementor-default .blocksy-fluid-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+}
+
+/* Elementor canvas template support */
+.elementor-template-canvas .blocksy-fluid-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* Elementor full-width sections */
+.elementor-section.elementor-section-full_width .blocksy-fluid-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Ensure Elementor content stays above canvas */
+.blocksy-fluid-elementor-enabled .elementor,
+.blocksy-fluid-elementor-enabled .elementor-page,
+.blocksy-fluid-elementor-enabled .elementor-default {
+    position: relative;
+    z-index: 2;
+}
+
+.blocksy-fluid-elementor-enabled .elementor-section,
+.blocksy-fluid-elementor-enabled .elementor-container,
+.blocksy-fluid-elementor-enabled .elementor-widget {
+    position: relative;
+    z-index: 2;
+}
+
+/* Elementor canvas template adjustments */
+.elementor-template-canvas.blocksy-fluid-animation-enabled {
+    position: relative;
+}
+
+.elementor-template-canvas .elementor {
+    position: relative;
+    z-index: 2;
+}
+
 /* Mobile optimizations */
 @media (max-width: 768px) {
     .blocksy-fluid-canvas {
         transform: translate3d(0, 0, 0);
         -webkit-transform: translate3d(0, 0, 0);
+    }
+    
+    /* Mobile Elementor optimizations */
+    .elementor .blocksy-fluid-canvas,
+    .elementor-page .blocksy-fluid-canvas {
+        will-change: auto;
     }
 }
 

@@ -1,3 +1,27 @@
+
+// Elementor compatibility
+if (typeof elementorFrontend !== 'undefined') {
+    elementorFrontend.hooks.addAction('frontend/element_ready/global', function($scope) {
+        // Initialize fluid animation for Elementor elements
+        var canvas = document.querySelector('.blocksy-fluid-canvas');
+        if (canvas && typeof fluid_init === 'function') {
+            fluid_init();
+        }
+    });
+}
+
+// Check for Elementor canvas template
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.body.classList.contains('elementor-template-canvas')) {
+        var canvas = document.querySelector('.blocksy-fluid-canvas');
+        if (canvas) {
+            canvas.style.position = 'fixed';
+            canvas.style.zIndex = '0';
+        }
+    }
+});
+
+
 'use strict';
 
 if (window.ajax_flag) {

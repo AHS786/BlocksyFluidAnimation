@@ -16,6 +16,10 @@ class Blocksy_Fluid_Animation {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
+        
+        // Elementor integration hooks
+        add_action('elementor/frontend/after_enqueue_styles', array($this, 'elementor_enqueue_scripts'));
+        add_action('elementor/preview/enqueue_styles', array($this, 'elementor_preview_scripts'));
     }
     
     private function load_dependencies() {
@@ -88,6 +92,41 @@ class Blocksy_Fluid_Animation {
         // Pass data to JavaScript
         wp_localize_script(
             'blocksy-fluid-animation',
+
+    
+    public function elementor_enqueue_scripts() {
+        $options = get_option('blocksy_fluid_animation_options', array());
+        
+        // Only load if enabled and we're in Elementor context
+        if (!isset($options['enabled']) || !$options['enabled']) {
+            return;
+        }
+        
+        // Enqueue styles for Elementor
+        wp_enqueue_style(
+            'blocksy-fluid-animation-elementor',
+            BLOCKSY_FLUID_ANIMATION_PLUGIN_URL . 'assets/css/fluid-animation.css',
+            array(),
+            BLOCKSY_FLUID_ANIMATION_VERSION
+        );
+        
+        // Add Elementor-specific script
+        wp_add_inline_script(
+            'blocksy-fluid-animation',
+            'window.blocksyFluidElementor = true;'
+        );
+    }
+    
+    public function elementor_preview_scripts() {
+        // Load scripts in Elementor preview mode
+        wp_enqueue_style(
+            'blocksy-fluid-animation-elementor-preview',
+            BLOCKSY_FLUID_ANIMATION_PLUGIN_URL . 'assets/css/fluid-animation.css',
+            array(),
+            BLOCKSY_FLUID_ANIMATION_VERSION
+        );
+    }
+
             'blocksyFluidAnimation',
             array(
                 'pluginUrl' => BLOCKSY_FLUID_ANIMATION_PLUGIN_URL,
