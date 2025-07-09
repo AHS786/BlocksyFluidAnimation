@@ -137,7 +137,11 @@ class Blocksy_Fluid_Animation {
         // Load scripts in Elementor preview mode
         wp_enqueue_style(
             'blocksy-fluid-animation-elementor-preview',
-
+            BLOCKSY_FLUID_ANIMATION_PLUGIN_URL . 'assets/css/fluid-animation.css',
+            array(),
+            BLOCKSY_FLUID_ANIMATION_VERSION
+        );
+    }
 
     public function add_theme_integration() {
         $options = get_option('blocksy_fluid_animation_options', array());
