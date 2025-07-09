@@ -1,0 +1,216 @@
+/* Blocksy Fluid Animation Styles */
+.blocksy-fluid-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    background: transparent;
+}
+
+.blocksy-fluid-animation-enabled .blocksy-fluid-canvas {
+    pointer-events: auto;
+}
+
+/* Ensure canvas doesn't interfere with content */
+.blocksy-fluid-animation-enabled {
+    position: relative;
+}
+
+.blocksy-fluid-animation-enabled .blocksy-fluid-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.blocksy-fluid-animation-enabled .site-content,
+.blocksy-fluid-animation-enabled .site-header,
+.blocksy-fluid-animation-enabled .site-footer {
+    position: relative;
+    z-index: 2;
+}
+
+/* Canvas container for specific elements */
+.blocksy-fluid-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.blocksy-fluid-container .blocksy-fluid-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Performance optimizations */
+.blocksy-fluid-canvas {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .blocksy-fluid-canvas {
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+    .blocksy-fluid-canvas {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* Accessibility - Respect user preferences */
+@media (prefers-reduced-motion: reduce) {
+    .blocksy-fluid-canvas {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* Loading state */
+.blocksy-fluid-loading {
+    position: relative;
+}
+
+.blocksy-fluid-loading::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1000;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Error state */
+.blocksy-fluid-error {
+    position: relative;
+    background: #f8d7da;
+    color: #721c24;
+    padding: 20px;
+    border-radius: 4px;
+    margin: 20px;
+    text-align: center;
+}
+
+.blocksy-fluid-error::before {
+    content: "⚠️";
+    display: block;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+/* Theme integration */
+.blocksy .blocksy-fluid-canvas {
+    border-radius: inherit;
+}
+
+.blocksy-container .blocksy-fluid-canvas {
+    border-radius: var(--theme-border-radius, 0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .blocksy-fluid-canvas {
+        transform: scale(0.9);
+        transform-origin: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .blocksy-fluid-canvas {
+        transform: scale(0.8);
+        transform-origin: center;
+    }
+}
+
+/* Print styles */
+@media print {
+    .blocksy-fluid-canvas {
+        display: none !important;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .blocksy-fluid-canvas {
+        opacity: 0.8;
+    }
+}
+
+/* Focus styles for accessibility */
+.blocksy-fluid-canvas:focus {
+    outline: 2px solid #007cba;
+    outline-offset: 2px;
+}
+
+/* Custom properties for theme integration */
+:root {
+    --blocksy-fluid-bg: #02030F;
+    --blocksy-fluid-opacity: 1;
+    --blocksy-fluid-blend-mode: normal;
+}
+
+.blocksy-fluid-canvas {
+    background-color: var(--blocksy-fluid-bg);
+    opacity: var(--blocksy-fluid-opacity);
+    mix-blend-mode: var(--blocksy-fluid-blend-mode);
+}
+
+/* Animation states */
+.blocksy-fluid-paused .blocksy-fluid-canvas {
+    animation-play-state: paused;
+}
+
+.blocksy-fluid-hidden .blocksy-fluid-canvas {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Fullscreen mode */
+.blocksy-fluid-fullscreen .blocksy-fluid-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999999;
+}
+
+/* Performance indicators */
+.blocksy-fluid-performance-low .blocksy-fluid-canvas {
+    filter: blur(1px);
+    opacity: 0.7;
+}
+
+.blocksy-fluid-performance-high .blocksy-fluid-canvas {
+    filter: none;
+    opacity: 1;
+}
